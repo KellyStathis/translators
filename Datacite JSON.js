@@ -60,6 +60,13 @@ function detectImport() {
 }
 
 
+// Make dataset robust for pre 6.0.24 versions of Zotero
+
+const datasetType = ZU.fieldIsValidForType('title', 'dataset')
+    ? 'dataset'
+    : 'document';
+                         
+
 // includes some citeproc types not returned by https://github.com/datacite/bolognese/blob/886c77522dcc76a3bf98b7460d56649934515db8/lib/bolognese/utils.rb#L84
 var citeprocMappingTypes = {
 	"book": "book",
@@ -89,7 +96,7 @@ var citeprocMappingTypes = {
 	"speech": "presentation",
 	"broadcast": "radioBroadcast",
 	"dataset": "document",
-	"dataset": "dataset"
+	"dataset": datasetType
 };
 
 // DataCite resourceTypeGeneral values from 4.4
@@ -102,7 +109,7 @@ var resourceTypeMappingTypes = {
 	"ConferencePaper": "conferencePaper",
 	"ConferenceProceeding": "document",
 	"DataPaper": "report",
-	"Dataset": "dataset",
+	"Dataset": datasetType,
 	"Dissertation": "thesis",
 	// "Event": "",
 	"Image": "artwork",
