@@ -60,16 +60,35 @@ function detectImport() {
 }
 
 
-// only lists citeproc types returned by https://github.com/datacite/bolognese/blob/886c77522dcc76a3bf98b7460d56649934515db8/lib/bolognese/utils.rb#L84
+// includes some citeproc types not returned by https://github.com/datacite/bolognese/blob/886c77522dcc76a3bf98b7460d56649934515db8/lib/bolognese/utils.rb#L84
 var citeprocMappingTypes = {
 	"book": "book",
 	"chapter": "bookSection",
 	"article-journal": "journalArticle",
+	"article-magazine": "magazineArticle",
+	"article-newspaper": "newspaperArticle",
+	"thesis": "thesis",
+	"entry-encyclopedia": "encyclopediaArticle",
+	"entry-dictionary": "dictionaryEntry",
 	"paper-conference": "conferencePaper",
+	"personal_communication": "letter",
+	"manuscript": "manuscript",
+	"interview": "interview",
 	"motion_picture": "film",
 	"graphic": "artwork",
+	"webpage": "webpage",
 	"report": "report",
+	"bill": "bill",
+	"legal_case": "case",
+	"patent": "patent",
+	"legislation": "statute",
+	"map": "map",
+	"post-weblog": "blogPost",
+	"post": "forumPost",
 	"song": "audioRecording",
+	"speech": "presentation",
+	"broadcast": "radioBroadcast",
+	"dataset": "document",
 	"dataset": "dataset"
 };
 
@@ -78,7 +97,7 @@ var resourceTypeMappingTypes = {
 	"Audiovisual": "film",
 	"Book": "book",
 	"BookChapter": "bookSection",
-	// "Collection": "",
+	"Collection": "webpage",
 	"ComputationalNotebook": "computerProgram",
 	"ConferencePaper": "conferencePaper",
 	"ConferenceProceeding": "document",
@@ -101,7 +120,7 @@ var resourceTypeMappingTypes = {
 	"Sound": "audioRecording",
 	"Standard": "standard",
 	"Text": "document"
-	// "Workflow": "",
+	// "Workflow": "document",
 	// "Other": ""
 };
 
