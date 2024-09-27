@@ -8,7 +8,7 @@
 	"priority": 100,
 	"inRepository": true,
 	"translatorType": 1,
-	"lastUpdated": "2022-08-25 10:25:41"
+	"lastUpdated": "2023-04-19 16:26:06"
 }
 
 /*
@@ -60,7 +60,15 @@ function detectImport() {
 }
 
 
-var mappingTypes = {
+// Make dataset robust for pre 6.0.24 versions of Zotero
+
+const datasetType = ZU.fieldIsValidForType('title', 'dataset')
+    ? 'dataset'
+    : 'document';
+                         
+
+// includes some citeproc types not returned by https://github.com/datacite/bolognese/blob/886c77522dcc76a3bf98b7460d56649934515db8/lib/bolognese/utils.rb#L84
+var citeprocMappingTypes = {
 	"book": "book",
 	"chapter": "bookSection",
 	"article-journal": "journalArticle",
@@ -87,26 +95,62 @@ var mappingTypes = {
 	"song": "audioRecording",
 	"speech": "presentation",
 	"broadcast": "radioBroadcast",
-	"dataset": "document"
+	"dataset": "document",
+	"dataset": datasetType
 };
 
-
+// DataCite resourceTypeGeneral values from 4.4
+var resourceTypeMappingTypes = {
+	"Audiovisual": "film",
+	"Book": "book",
+	"BookChapter": "bookSection",
+	"Collection": "webpage",
+	"ComputationalNotebook": "computerProgram",
+	"ConferencePaper": "conferencePaper",
+	"ConferenceProceeding": "document",
+	"DataPaper": "report",
+	"Dataset": datasetType,
+	"Dissertation": "thesis",
+	// "Event": "",
+	"Image": "artwork",
+	"InteractiveResource": "webpage",
+	// "Journal": "",
+	"JournalArticle": "journalArticle",
+	// "Model": "",
+	"OutputManagementPlan": "document",
+	"PeerReview": "document",
+	// "PhysicalObject": "",
+	"Preprint": "preprint",
+	"Report": "report",
+	// "Service": "",
+	"Software": "computerProgram",
+	"Sound": "audioRecording",
+	"Standard": "standard",
+	"Text": "document"
+	// "Workflow": "document",
+	// "Other": ""
+};
 
 function doImport() {
 	var data = parseInput();
 
+	// default to journalArticle
 	var type = "journalArticle";
-	if (data.types.citeproc && mappingTypes[data.types.citeproc]) {
-		type = mappingTypes[data.types.citeproc];
+	if (data.types.citeproc && citeprocMappingTypes[data.types.citeproc]) {
+		type = citeprocMappingTypes[data.types.citeproc];
 	}
+
+	// use DataCite resourceTypeGeneral where available
+	if (data.types.resourceTypeGeneral && resourceTypeMappingTypes[data.types.resourceTypeGeneral]) {
+		type = resourceTypeMappingTypes[data.types.resourceTypeGeneral];
+	}
+
 	if (["softwaresourcecode", "softwareapplication", "mobileapplication", "videogame", "webapplication"].includes(data.types.schemaOrg.toLowerCase())) {
 		type = "computerProgram";
 	}
 
 	var item = new Zotero.Item(type);
-	if (data.types.citeproc == "dataset") {
-		item.extra = "Type: dataset";
-	}
+
 	var title = "";
 	for (let titleElement of data.titles) {
 		if (!titleElement.title) {
